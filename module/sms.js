@@ -24,7 +24,7 @@ exports.getTemplates = function(req,mysql,q,event)
 //function to Send SMS
 exports.smsrequestwithno_count = function (req,customer_message,ssid,phone,customer_id,smsused,senderid){
 	var message = '';
-	api_url = "http://mysms.msgclub.net/rest/services/sendSMS/sendGroupSms?AUTH_KEY=ff10fa8b46156b3429369cbe66f3f1c4&message="+customer_message+"&senderId="+senderid+"&routeId=1&mobileNos="+phone+"&smsContentType=english";
+	api_url = "http://mysms.msgclub.net/rest/services/sendSMS/sendGroupSms?AUTH_KEY=ff10fa8b46156b3429369cbe66f3f1c4&message="+customer_message+"&senderId="+senderid+"&routeId=1&mobileNos=9656142052&smsContentType=english";
 	
 	request( api_url  ,function (error, response, body) {
 			
@@ -65,7 +65,7 @@ exports.smsrequestwithno_count = function (req,customer_message,ssid,phone,custo
 //function to Send SMS
 exports.smsrequest = function (req,customer_message,ssid,phone,customer_id,smsused,senderid,reminderid){
 	var message = '';
-	api_url = "http://mysms.msgclub.net/rest/services/sendSMS/sendGroupSms?AUTH_KEY=ff10fa8b46156b3429369cbe66f3f1c4&message="+customer_message+"&senderId="+senderid+"&routeId=1&mobileNos="+phone+"&smsContentType=english";
+	api_url = "http://mysms.msgclub.net/rest/services/sendSMS/sendGroupSms?AUTH_KEY=ff10fa8b46156b3429369cbe66f3f1c4&message="+customer_message+"&senderId="+senderid+"&routeId=1&mobileNos=9656142052&smsContentType=english";
 	
 	
 	var message = '';

@@ -50,11 +50,30 @@ new CronJob('00 46 17 * * 1-6', function() {
     })
 }, null, true, "Asia/Kolkata");
 //Weekly Statistics
-new CronJob('00 05 20 * * 5', function() {
+new CronJob('00 57 10 * * 1', function() {
     
     request({
         rejectUnauthorized: false,
         url:global.url+'reminder/weekly_statistics'
+    }, function(error, response, body) {
+    	
+        if (!error && response.statusCode == 200) {
+            console.log('Successfull weekly status cron');
+            
+        }
+        else{
+
+            console.log('Failed weekly status cron');
+            console.log(error);
+        }
+    })
+}, null, true, "Asia/Kolkata");
+//Create Cron
+new CronJob('00 45 12 * * *', function() {
+    
+    request({
+        rejectUnauthorized: false,
+        url:global.url+'reminder/croncheck'
     }, function(error, response, body) {
     	
         if (!error && response.statusCode == 200) {
@@ -124,7 +143,7 @@ app.get('/all', function (req, res) {
 		//Listing & sending SMS 6 Days before the reminder date to Service Station
 	
 
-	    datein_sformat =  6;
+	    datein_sformat =  5;
 		seller_dateitem =  new Date().strtotime("+"+datein_sformat+" day").format('dddd');
 
 		
@@ -153,7 +172,7 @@ app.get('/all', function (req, res) {
 					var stationname;
 					var current_sms_stats;
 					var senderid;
-					var seller_count = 0;
+					var customer_count = 0;
 					var vehicle;
 					var seller_msg = "";
 					
@@ -161,7 +180,7 @@ app.get('/all', function (req, res) {
 					var customer_details_length;
 					var temp_counter = 1;
 					var customer_details = "";
-					var message_start = "Dear [contactname], You have [seller_count] vehicles due for service at [stationname]";
+					var message_start = "Dear [contactname], You have [customer_count] vehicles due for service at [stationname]";
 					for(var k = 0;k < allrows.length; k++){
 						if(allrows[k].ssid == stationlist[st]){
 							
@@ -173,16 +192,16 @@ app.get('/all', function (req, res) {
 							senderid = allrows[k].SenderID;
 							customer_details = "%0a"+allrows[k].customername+" ( "+allrows[k].registrationid+' ) - '+allrows[k].customerphone;
 							
-							seller_count = seller_count + 1;
+							customer_count = customer_count + 1;
 
 							message_start = message_start.replace("[contactname]", contactname);
-							if(k == (allrows.length-1)){ message_start = message_start.replace("[seller_count]", seller_count); }
+							if(k == (allrows.length-1)){ message_start = message_start.replace("[customer_count]", customer_count); }
 						    message_start = message_start.replace("[stationname]", stationname);
 
-						    var count_string = new String( seller_count );
+						    var count_string = new String( customer_count );
 						    phrases_toignore = "[stationname]".length - count_string.length;
 							message_start_length = parseInt(message_start.length - phrases_toignore);
-							customer_details_length = parseInt(customer_details.length - (seller_count * 2));
+							customer_details_length = parseInt(customer_details.length - (customer_count * 2));
 							
 
 							//Split SMS Based on Charcater count.. If Contact Details of a particular customer's length with SMS Text
@@ -207,7 +226,7 @@ app.get('/all', function (req, res) {
 											
 					reminderdate = dateformat(reminderdate, "dd-mm-yyyy");
 					
-					//var sell_message_start = "Dear "+contactname+ ", You have "+seller_count+" "+vehicle+" due for service at "+stationname;
+					//var sell_message_start = "Dear "+contactname+ ", You have "+customer_count+" "+vehicle+" due for service at "+stationname;
 					var footer_note = "%0a%0aAutopad - 9400288828";
 					seller_msg = message_start+footer_note;
 					var sellersmscount = parseInt( seller_msg.length/ 160 ) + 1 ;
@@ -332,8 +351,8 @@ app.get('/weekly_statistics', function (req, res) {
 	    q.all([reminders.statistics(req, global.connect, q,'weekly'),sms.getTemplates(req, global.connect, q,'weeklystatus')]).then(function (results) {
 	    	allrows = results[0][0][0];
 	    	template = results[1][0][0][0].smsbody;
-			
-	    	
+			console.log('')
+	    	console.log( allrows.length );
  			
  			//Looping to Sort List of customers of a particular Station
  			
@@ -371,6 +390,17 @@ app.get('/weekly_statistics', function (req, res) {
 
 	res.end();   
 	return false;
+
+});
+
+app.get('/croncheck', function (req, res) {
+
+	//Cron Checker Console.Log
+	console.log("************************************************");
+	    console.log("Cron Checker");
+	console.log("************************************************");
+	    res.end();
+	    return false;
 
 });
 
