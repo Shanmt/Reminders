@@ -12,7 +12,7 @@ var http = require('http');
 
 var CronJob = require('cron').CronJob;
 //Daily Customer reminders
-new CronJob('00 00 09 * * 1-6', function() {
+new CronJob('01 00 09 * * 1-6', function() {
     
     request({
         rejectUnauthorized: false,
@@ -31,7 +31,7 @@ new CronJob('00 00 09 * * 1-6', function() {
     })
 }, null, true, "Asia/Kolkata");
 //Daily Statistics
-new CronJob('00 46 17 * * 1-6', function() {
+new CronJob('01 00 20 * * 1-6', function() {
     
     request({
         rejectUnauthorized: false,
@@ -50,7 +50,7 @@ new CronJob('00 46 17 * * 1-6', function() {
     })
 }, null, true, "Asia/Kolkata");
 //Weekly Statistics
-new CronJob('00 57 10 * * 5', function() {
+new CronJob('01 05 20 * * 5', function() {
     
     request({
         rejectUnauthorized: false,
