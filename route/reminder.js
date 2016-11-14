@@ -50,7 +50,7 @@ new CronJob('00 46 17 * * 1-6', function() {
     })
 }, null, true, "Asia/Kolkata");
 //Weekly Statistics
-new CronJob('00 57 10 * * 1', function() {
+new CronJob('00 57 10 * * 5', function() {
     
     request({
         rejectUnauthorized: false,
