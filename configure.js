@@ -11,35 +11,18 @@ exports.app = function()
        password: "",
       database : 'clubauto_cloud2.3'
       };
-   function handleDisconnect()
-   {  
+  global.connect = mysql.createPool(global.dbconfig); 
+      
+  global.connect.getConnection(function(err, connection) {
 
-   	  global.connect = mysql.createConnection(global.dbconfig); 
-      
-      global.connect.connect();
-      
-      global.connect.on('close', function (err) {
-        handleDisconnect();
-      });
-      
-      global.connect.on('end', function (err) {
-        handleDisconnect();
-      });
-      
-      global.connect.on('error', function(err) {
-         if(err.code === 'PROTOCOL_CONNECTION_LOST') { 
-             handleDisconnect();                        
-          } 
-          else {
-           console.log(err);
-           //throw err;
-         }
-      });
-      
-      global.mysql = global.connect;
+    if(err){
+      console.log(err);
+      return false;
     }
+     global.mysql = connection;
+  });
+    
    //console.log(global);
-   handleDisconnect();
-
+  
    return global;
 }

@@ -14,14 +14,12 @@ exports.getreminders = function(req,mysql,q,datein_format,dateitem,type)
   var nextdate = 0;
   var lastdate = 0;
 
-  	if(type == "customer"){
+  if(type == "customer"){
 		if(dateitem == "Monday"){
 		  	
 		  	lastdate = 1;
 
 		}
-	    
-	   
 	}
 	if(type == "station"){
 		
@@ -29,8 +27,6 @@ exports.getreminders = function(req,mysql,q,datein_format,dateitem,type)
 		  	
 		  	lastdate = 1;
 		}
-
-
 	}
 	strQuery = mysqli.mysqli($mysqli,'getreminders');
 	var escape_data = [datein_format,lastdate];
@@ -38,18 +34,6 @@ exports.getreminders = function(req,mysql,q,datein_format,dateitem,type)
     query =  mysql.query(strQuery,escape_data,defered.makeNodeResolver());
     console.log( query.sql );
     return defered.promise;
-}
-//Module To Get ALL reminders
-exports.getdata = function(req,mysql,q)
-{
-
-  $mysqli =  {};
-  strQuery = mysqli.mysqli($mysqli,'getreminder');
-  var escape_data = [];
-  var defered = q.defer();
-  query =  mysql.query(strQuery,escape_data,defered.makeNodeResolver());
-  console.log(query.sql);
-  return defered.promise;
 }
 //Module To Update ang Log SMS
 exports.smslog = function(req,mysql,q,smsdata,smscount,ssid,phonenumber,customerid )
@@ -91,7 +75,7 @@ exports.updatereminders = function(req,mysql,q,reminderid)
 //Module To Give Satistics
 exports.statistics =  function(req,mysql,q,type)
 {
-
+ 
   $mysqli =  {};
   strQuery = mysqli.mysqli($mysqli,'statistics');
   var escape_data = [type];

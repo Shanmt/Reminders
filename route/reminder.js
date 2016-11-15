@@ -9,6 +9,9 @@ var qs = require('querystring')
 var app = express();
 var dat = require('date-util');
 var http = require('http');
+var cluster = require('cluster');
+var config = require('../configure');
+config.app();
 
 var CronJob = require('cron').CronJob;
 //Daily Customer reminders
@@ -69,23 +72,48 @@ new CronJob('01 05 20 * * 5', function() {
     })
 }, null, true, "Asia/Kolkata");
 //Create Cron
-new CronJob('00 45 12 * * *', function() {
-    
-    request({
-        rejectUnauthorized: false,
-        url:global.url+'reminder/croncheck'
-    }, function(error, response, body) {
-    	
-        if (!error && response.statusCode == 200) {
-            console.log('Successfull weekly status cron');
-            
-        }
-        else{
+new CronJob('15 59 15 * * *', function() {
+	if(cluster.workers.id == undefined){
+		request({
+        	rejectUnauthorized: false,
+        	url:global.url+'reminder/croncheck'
+	    }, function(error, response, body) {
+	    	
+	        if (!error && response.statusCode == 200) {
+	            console.log('Successfull Cron status');
+	            
+	        }
+	        else{
 
-            console.log('Failed weekly status cron');
-            console.log(error);
-        }
-    })
+	            console.log('Failed Cron status');
+	            console.log(error);
+	        }
+	    });
+	}
+	else if(cluster.workers.id == 1){
+		
+		request({
+        	rejectUnauthorized: false,
+        	url:global.url+'reminder/croncheck'
+	    }, function(error, response, body) {
+	    	
+	        if (!error && response.statusCode == 200) {
+	            console.log('Successfull Cron status');
+	            
+	        }
+	        else{
+
+	            console.log('Failed Cron status');
+	            console.log(error);
+	        }
+	    });
+
+	}
+	else{
+		console.log('Cron Error');
+	}
+    
+    
 }, null, true, "Asia/Kolkata");
 
 //Function to send Daily Reminders
@@ -94,13 +122,13 @@ app.get('/all', function (req, res) {
     //query to get all reminders list
     today = new Date().format('dddd');
     
-    datein_format = 7;
+    datein_format = 4;
     dateitem =  new Date().strtotime("+"+datein_format+" day").format('dddd');
     
     if(today != 'Sunday'){
 	    
 	    //Listing & sending SMS 7 Days before the reminder date to Customer
-	    q.all([reminders.getreminders(req, global.connect, q,datein_format,dateitem,"customer")]).then(function (results) {
+	    q.all([reminders.getreminders(req, global.mysql, q,datein_format,dateitem,"customer")]).then(function (results) {
 
 	    	rows = results[0][0][0];
 	    	
@@ -136,19 +164,19 @@ app.get('/all', function (req, res) {
 				}
 				
 			}
-			
+		global.mysql.release();	
 			
 	    });
 	
 		//Listing & sending SMS 6 Days before the reminder date to Service Station
 	
 
-	    datein_sformat =  5;
+	    datein_sformat =  4;
 		seller_dateitem =  new Date().strtotime("+"+datein_sformat+" day").format('dddd');
 
 		
 
-	    q.all([reminders.getreminders(req, global.connect, q,datein_sformat,seller_dateitem,"station")]).then(function (results2) {
+	    q.all([reminders.getreminders(req, global.mysql, q,datein_sformat,seller_dateitem,"station")]).then(function (results2) {
 	    	
 	    	allrows = results2[0][0][0];
 	    	
@@ -245,7 +273,7 @@ app.get('/all', function (req, res) {
 			}
 
 	    	
-
+		global.mysql.release();
 	    });
 
 	    
@@ -262,7 +290,7 @@ app.get('/all', function (req, res) {
 
 	//Listing & sending SMS weekly statistics to Customer
 
-	    q.all([reminders.loggeddata(req, global.connect, q)]).then(function (results) {
+	    q.all([reminders.loggeddata(req, global.mysql, q)]).then(function (results) {
     		
 	    		date_check =  new Date().format('dddd');
     			dateitem =  new Date().format('ddmmyyyy');
@@ -280,7 +308,7 @@ app.get('/all', function (req, res) {
 					
 
 				  stream.end();
-				q.all([reminders.removeloggeddata(req, global.connect, q)]).then(function (results) { });  
+				q.all([reminders.removeloggeddata(req, global.mysql, q)]).then(function (results) { });  
 
 				});
 	    	
@@ -296,14 +324,13 @@ app.get('/daily_statistics', function (req, res) {
 	if(date_check != "Sunday"){
 		//Listing & sending SMS Daily Summmary to Customer
 
-	    q.all([reminders.statistics(req, global.connect, q,'daily'),sms.getTemplates(req, global.connect, q,'dailystatus')]).then(function (results) {
+	    q.all([reminders.statistics(req, global.mysql, q,'daily'),sms.getTemplates(req, global.mysql, q,'dailystatus')]).then(function (results) {
 	    	allrows = results[0][0][0];
 	    	template = results[1][0][0][0].smsbody;
 			
 	    	var seller_msg = template;
  			
  			//Looping to Sort List of customers of a particular Station
- 			
  			for(var i = 0;i< allrows.length;i++){
 					
 					
@@ -332,7 +359,7 @@ app.get('/daily_statistics', function (req, res) {
 					
 			}
 
-
+		global.mysql.release();
 	   });	
 	}
 
@@ -348,10 +375,10 @@ app.get('/weekly_statistics', function (req, res) {
 	if(date_check != "Sunday"){
 		//Listing & sending SMS Weekly Summmary to Customer
 
-	    q.all([reminders.statistics(req, global.connect, q,'weekly'),sms.getTemplates(req, global.connect, q,'weeklystatus')]).then(function (results) {
+	    q.all([reminders.statistics(req, global.mysql, q,'weekly'),sms.getTemplates(req, global.mysql, q,'weeklystatus')]).then(function (results) {
 	    	allrows = results[0][0][0];
 	    	template = results[1][0][0][0].smsbody;
-			console.log('')
+			
 	    	console.log( allrows.length );
  			
  			//Looping to Sort List of customers of a particular Station
@@ -384,7 +411,7 @@ app.get('/weekly_statistics', function (req, res) {
 					
 			}
 
-
+		global.mysql.release();
 	   });	
 	}
 

@@ -11,7 +11,7 @@ var mysqli = require('./mysqli');
 //Module To Get "event" Templates
 exports.getTemplates = function(req,mysql,q,event)
 {
-
+  
   $mysqli =  {};
   strQuery = mysqli.mysqli($mysqli,'gettemplates');
   var escape_data = [event];
@@ -70,46 +70,46 @@ exports.smsrequest = function (req,customer_message,ssid,phone,customer_id,smsus
 	
 	var message = '';
     	
-    	request( api_url  ,function (error, response, body) {
+    request( api_url  ,function (error, response, body) {
 				
 				
-		    if (!error && response.statusCode == 200) {
-		    	
-		    	
-		    	var result = JSON.parse(body);
-		    	if (result.responseCode != "3001") {
+	    if (!error && response.statusCode == 200) {
+	    	
+	    	
+	    	var result = JSON.parse(body);
+	    	if (result.responseCode != "3001") {
 
-		            console.log(error);
+	            console.log(error);
 
-		        }
-		    	else{
-		        	
-		        	$mysqli2 = {};
-		        	var smslog = customer_message;
-		        	var smscount = parseInt( smslog.length/160 ) + 1;
-		        	
-		        	//Adding current SMS count with SMS Length
-		        	var sms_used = smsused + smscount;
-		        	var servicestation = ssid;
-		        	var nows = new Date();
-		        	var createddate = dateformat(nows, "yyyy-mm-dd hh:mm:ss");
-		        	var tomobile = phone;
-		        	var customerid = customer_id;
-		        	// Adding Urgument to Update SMSLOG Table
-		        	
+	        }
+	    	else{
+	        	
+	        	$mysqli2 = {};
+	        	var smslog = customer_message;
+	        	var smscount = parseInt( smslog.length/160 ) + 1;
+	        	
+	        	//Adding current SMS count with SMS Length
+	        	var sms_used = smsused + smscount;
+	        	var servicestation = ssid;
+	        	var nows = new Date();
+	        	var createddate = dateformat(nows, "yyyy-mm-dd hh:mm:ss");
+	        	var tomobile = phone;
+	        	var customerid = customer_id;
+	        	// Adding Urgument to Update SMSLOG Table
+	        	
 
-		        	//Update SMS Count and SMS LOG
-		        	q.all([reminders.smslog(req, global.connect, q,smslog,smscount,ssid,phone,customerid)]).then( function(results) {} );
-		        	
-					if(reminderid > 0){
+	        	//Update SMS Count and SMS LOG
+	        	q.all([reminders.smslog(req, global.connect, q,smslog,smscount,ssid,phone,customerid)]).then( function(results) {} );
+	        	
+				if(reminderid > 0){
 
-						reminders.updatereminders(req, global.connect, q,reminderid );
-					}		        	
-		        				        				        	
-		   		}
-		        
+					reminders.updatereminders(req, global.connect, q,reminderid );
+				}		        	
+	        				        				        	
+	   		}
+	        
 
-		    }
+	    }
 
 	});
 }
