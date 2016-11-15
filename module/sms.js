@@ -51,7 +51,7 @@ exports.smsrequestwithno_count = function (req,customer_message,ssid,phone,custo
 	        	
 
 	        	//Update SMS LOG
-	        	q.all([reminders.smslogwithnocount(req, global.connect, q,smslog,smscount,ssid,phone,customerid)]).then( function(results) {} );
+	        	q.all([reminders.smslogwithnocount(req, global.mysql, q,smslog,smscount,ssid,phone,customerid)]).then( function(results) {} );
 	        	
 					        	
 	        				        				        	
@@ -99,11 +99,11 @@ exports.smsrequest = function (req,customer_message,ssid,phone,customer_id,smsus
 	        	
 
 	        	//Update SMS Count and SMS LOG
-	        	q.all([reminders.smslog(req, global.connect, q,smslog,smscount,ssid,phone,customerid)]).then( function(results) {} );
+	        	q.all([reminders.smslog(req, global.mysql, q,smslog,smscount,ssid,phone,customerid)]).then( function(results) {} );
 	        	
 				if(reminderid > 0){
 
-					reminders.updatereminders(req, global.connect, q,reminderid );
+					reminders.updatereminders(req, global.mysql, q,reminderid );
 				}		        	
 	        				        				        	
 	   		}

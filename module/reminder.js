@@ -60,12 +60,12 @@ exports.smslogwithnocount = function(req,mysql,q,smsdata,smscount,ssid,phonenumb
   return defered.promise;
 }
 //Module To Update Reminder table
-exports.updatereminders = function(req,mysql,q,reminderid)
+exports.updatereminders = function(req,mysql,q,reminderid,type)
 {
 
   $mysqli =  {};
   strQuery = mysqli.mysqli($mysqli,'updatereminders');
-  var escape_data = [reminderid];
+  var escape_data = [reminderid,type];
   var defered = q.defer();
   query =  mysql.query(strQuery,escape_data,defered.makeNodeResolver());
   console.log(query.sql);

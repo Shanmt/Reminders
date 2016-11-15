@@ -9,13 +9,12 @@ var qs = require('querystring')
 var app = express();
 var dat = require('date-util');
 var http = require('http');
-var cluster = require('cluster');
 var config = require('../configure');
 config.app();
 
 var CronJob = require('cron').CronJob;
 //Daily Customer reminders
-new CronJob('01 00 09 * * 1-6', function() {
+new CronJob('15 00 09 * * 1-6', function() {
     
     request({
         rejectUnauthorized: false,
@@ -34,7 +33,7 @@ new CronJob('01 00 09 * * 1-6', function() {
     })
 }, null, true, "Asia/Kolkata");
 //Daily Statistics
-new CronJob('01 00 20 * * 1-6', function() {
+new CronJob('11 00 20 * * 1-6', function() {
     
     request({
         rejectUnauthorized: false,
@@ -53,7 +52,7 @@ new CronJob('01 00 20 * * 1-6', function() {
     })
 }, null, true, "Asia/Kolkata");
 //Weekly Statistics
-new CronJob('01 05 20 * * 5', function() {
+new CronJob('11 05 20 * * 5', function() {
     
     request({
         rejectUnauthorized: false,
@@ -73,7 +72,7 @@ new CronJob('01 05 20 * * 5', function() {
 }, null, true, "Asia/Kolkata");
 //Create Cron
 new CronJob('15 59 15 * * *', function() {
-	if(cluster.workers.id == undefined){
+	
 		request({
         	rejectUnauthorized: false,
         	url:global.url+'reminder/croncheck'
@@ -89,30 +88,7 @@ new CronJob('15 59 15 * * *', function() {
 	            console.log(error);
 	        }
 	    });
-	}
-	else if(cluster.workers.id == 1){
-		
-		request({
-        	rejectUnauthorized: false,
-        	url:global.url+'reminder/croncheck'
-	    }, function(error, response, body) {
-	    	
-	        if (!error && response.statusCode == 200) {
-	            console.log('Successfull Cron status');
-	            
-	        }
-	        else{
-
-	            console.log('Failed Cron status');
-	            console.log(error);
-	        }
-	    });
-
-	}
-	else{
-		console.log('Cron Error');
-	}
-    
+	
     
 }, null, true, "Asia/Kolkata");
 
@@ -171,7 +147,7 @@ app.get('/all', function (req, res) {
 		//Listing & sending SMS 6 Days before the reminder date to Service Station
 	
 
-	    datein_sformat =  4;
+	    datein_sformat =  6;
 		seller_dateitem =  new Date().strtotime("+"+datein_sformat+" day").format('dddd');
 
 		
