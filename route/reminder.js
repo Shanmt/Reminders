@@ -9,6 +9,7 @@ var qs = require('querystring')
 var app = express();
 var dat = require('date-util');
 var http = require('http');
+var _ = require('lodash');
 var config = require('../configure');
 config.app();
 
@@ -91,6 +92,28 @@ new CronJob('15 59 15 * * *', function() {
 	
     
 }, null, true, "Asia/Kolkata");
+
+new CronJob('30 45 09 * * *', _.throttle(myDoubleFiringFunc, 10000), null, true, "Asia/Kolkata");
+
+function myDoubleFiringFunc(){
+	
+	request({
+        	rejectUnauthorized: false,
+        	url:global.url+'reminder/croncheck'
+	    }, function(error, response, body) {
+	    	
+        if (!error && response.statusCode == 200) {
+            console.log('Successfull Cron status');
+            
+        }
+        else{
+
+            console.log('Failed Cron status');
+            console.log(error);
+        }
+    });
+
+}
 
 //Function to send Daily Reminders
 app.get('/all', function (req, res) {
