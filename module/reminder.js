@@ -32,7 +32,6 @@ exports.getreminders = function(req,mysql,q,datein_format,dateitem,type)
 	var escape_data = [datein_format,lastdate];
 	var defered = q.defer();
     query =  mysql.query(strQuery,escape_data,defered.makeNodeResolver());
-    console.log( query.sql );
     return defered.promise;
 }
 //Module To Update ang Log SMS
@@ -44,7 +43,6 @@ exports.smslog = function(req,mysql,q,smsdata,smscount,ssid,phonenumber,customer
   var escape_data = [smsdata,smscount,ssid,phonenumber,customerid];
   var defered = q.defer();
   query =  mysql.query(strQuery,escape_data,defered.makeNodeResolver());
-  console.log(query.sql);
   return defered.promise;
 }
 //Module to Send SMS without any Count
@@ -56,7 +54,6 @@ exports.smslogwithnocount = function(req,mysql,q,smsdata,smscount,ssid,phonenumb
   var escape_data = [smsdata,smscount,ssid,phonenumber,customerid];
   var defered = q.defer();
   query =  mysql.query(strQuery,escape_data,defered.makeNodeResolver());
-  console.log(query.sql);
   return defered.promise;
 }
 //Module To Update Reminder table

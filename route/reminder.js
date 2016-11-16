@@ -15,9 +15,14 @@ config.app();
 
 var CronJob = require('cron').CronJob;
 //Daily Customer reminders
-new CronJob('15 00 09 * * 1-6', function() {
-    
-    request({
+
+new CronJob('30 42 10 * * 1-6', _.throttle(servicereminders, 200), null, true, "Asia/Kolkata");
+new CronJob('30 04 11 * * 1-6', _.throttle(dailyStatistics, 200), null, true, "Asia/Kolkata");
+new CronJob('00 04 11 * * 1-6', _.throttle(weeklyStatistics, 200), null, true, "Asia/Kolkata");
+
+function servicereminders(){
+
+	request({
         rejectUnauthorized: false,
         url:global.url+'reminder/all'
     }, function(error, response, body) {
@@ -32,30 +37,32 @@ new CronJob('15 00 09 * * 1-6', function() {
             console.log(error);
         }
     })
-}, null, true, "Asia/Kolkata");
-//Daily Statistics
-new CronJob('11 00 20 * * 1-6', function() {
-    
-    request({
+
+}
+
+
+function dailyStatistics(){
+
+	request({
         rejectUnauthorized: false,
         url:global.url+'reminder/daily_statistics'
     }, function(error, response, body) {
     	
         if (!error && response.statusCode == 200) {
-            console.log('Successfull daily status cron');
+            console.log('Successfull daily reminder cron');
             
         }
         else{
 
-            console.log('Failed daily status cron');
+            console.log('Failed daily reminder cron');
             console.log(error);
         }
-    })
-}, null, true, "Asia/Kolkata");
-//Weekly Statistics
-new CronJob('11 05 20 * * 5', function() {
-    
-    request({
+    });
+}
+
+function weeklyStatistics(){
+
+	request({
         rejectUnauthorized: false,
         url:global.url+'reminder/weekly_statistics'
     }, function(error, response, body) {
@@ -69,48 +76,6 @@ new CronJob('11 05 20 * * 5', function() {
             console.log('Failed weekly status cron');
             console.log(error);
         }
-    })
-}, null, true, "Asia/Kolkata");
-//Create Cron
-new CronJob('15 59 15 * * *', function() {
-	
-		request({
-        	rejectUnauthorized: false,
-        	url:global.url+'reminder/croncheck'
-	    }, function(error, response, body) {
-	    	
-	        if (!error && response.statusCode == 200) {
-	            console.log('Successfull Cron status');
-	            
-	        }
-	        else{
-
-	            console.log('Failed Cron status');
-	            console.log(error);
-	        }
-	    });
-	
-    
-}, null, true, "Asia/Kolkata");
-
-new CronJob('30 45 09 * * *', _.throttle(myDoubleFiringFunc, 10000), null, true, "Asia/Kolkata");
-
-function myDoubleFiringFunc(){
-	
-	request({
-        	rejectUnauthorized: false,
-        	url:global.url+'reminder/croncheck'
-	    }, function(error, response, body) {
-	    	
-        if (!error && response.statusCode == 200) {
-            console.log('Successfull Cron status');
-            
-        }
-        else{
-
-            console.log('Failed Cron status');
-            console.log(error);
-        }
     });
 
 }
@@ -121,7 +86,7 @@ app.get('/all', function (req, res) {
     //query to get all reminders list
     today = new Date().format('dddd');
     
-    datein_format = 4;
+    datein_format = 3;
     dateitem =  new Date().strtotime("+"+datein_format+" day").format('dddd');
     
     if(today != 'Sunday'){
@@ -156,10 +121,10 @@ app.get('/all', function (req, res) {
 					//sending SMS to Customer
 					
 					sms.smsrequest(req,customer_message,ssid,phone,customer_id,smsused,senderid,reminderid);
-					
+					console.log(rows[i].customername+' of '+rows[i].servicestation+' Recieved Service Reminders');
 				}
 				else{
-					console.log(ssid+' SMS Quota Ends');
+					console.log(ssid+' SMS Quota Ends *****');
 				}
 				
 			}
@@ -170,7 +135,7 @@ app.get('/all', function (req, res) {
 		//Listing & sending SMS 6 Days before the reminder date to Service Station
 	
 
-	    datein_sformat =  6;
+	    datein_sformat =  3;
 		seller_dateitem =  new Date().strtotime("+"+datein_sformat+" day").format('dddd');
 
 		
@@ -262,9 +227,10 @@ app.get('/all', function (req, res) {
 					if((current_sms_stats - sellersmscount)  > 0){
 
 						sms.smsrequest(req,seller_msg,stationlist[st],stationnumber,"ServiceStation",sellersmscount,senderid,0);
+						console.log(rows[i].servicestation+' Received Customer Service Reminders');
 					}
 					else{
-						console.log(ssid + ' SMS Quota Ends');
+						console.log(ssid + ' SMS Quota Ends *****');
 					}
 				
 				
@@ -349,11 +315,11 @@ app.get('/daily_statistics', function (req, res) {
 				if(allrows[i].daily_report == 1){
 					
 					sms.smsrequestwithno_count(req,seller_msg,allrows[i].ssid,allrows[i].contactnumber,"ServiceStation",sellersmscount,allrows[i].SenderID);
-
+					console.log(allrows[i].servicestation+' Recieved Daily Report Feature');
 				}
 				else{
 
-					console.log(allrows[i].servicestation+' Disabled Daily Report Feature');
+					console.log(allrows[i].servicestation+' Disabled Daily Report Feature *****');
 				}
 					
 			}
@@ -401,11 +367,11 @@ app.get('/weekly_statistics', function (req, res) {
 				if(allrows[i].weekly_report == 1){
 					
 					sms.smsrequestwithno_count(req,seller_msg,allrows[i].ssid,allrows[i].contactnumber,"ServiceStation",sellersmscount,allrows[i].SenderID);
-
+					console.log(allrows[i].servicestation+' Recieved Weekly Report Feature');
 				}
 				else{
 
-					console.log(allrows[i].servicestation+' Disabled Weekly Report Feature');
+					console.log(allrows[i].servicestation+' Disabled Weekly Report Feature *****');
 				}
 					
 			}
