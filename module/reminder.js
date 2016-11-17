@@ -82,6 +82,33 @@ exports.statistics =  function(req,mysql,q,type)
 
 }
 
+//Module To Give Satistics
+exports.getcertificatereminders =  function(req,mysql,q)
+{
+ 
+  $mysqli =  {};
+  strQuery = mysqli.mysqli($mysqli,'certificatereminder');
+  var escape_data = [];
+  var defered = q.defer();
+  query =  mysql.query(strQuery,escape_data,defered.makeNodeResolver());
+ 
+  return defered.promise;
+
+}
+
+exports.cronLog =  function(req,mysql,q,cronname,type)
+{
+ 
+  $mysqli =  {};
+  strQuery = mysqli.mysqli($mysqli,'cronLog');
+  var escape_data = [cronname,type];
+  var defered = q.defer();
+  query =  mysql.query(strQuery,escape_data,defered.makeNodeResolver());
+  console.log(query.sql)
+  return defered.promise;
+
+}
+
 /*exports.loggeddata =  function(req,mysql,q)
 {
 
