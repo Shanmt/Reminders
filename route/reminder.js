@@ -430,7 +430,7 @@ app.get('/weekly_statistics', function (req, res) {
 
 });
 
-app.get('/certificate_reminder', function (req, res) {
+/*app.get('/certificate_reminder', function (req, res) {
 
 	q.all(reminders.getcertificatereminders(req, global.mysql, q)).then(function (results) {
 
@@ -438,7 +438,7 @@ app.get('/certificate_reminder', function (req, res) {
 	//Insurance Results
 	var insurance = results[0][0];
 
-	/*console.log(results[0][1]);*/
+	
 	console.log(insurance.length);
 	for(var i = 0;i<insurance.length;i++){
 		if(insurance[i].insurance_reminder_status == 1){
@@ -472,25 +472,7 @@ app.get('/certificate_reminder', function (req, res) {
 	return false;
 
 	
-});
-
-
-/*app.get('/croncheck', function (req, res) {
-	console.log(numCPUs);
-	q.all(reminders.cronLog(req, global.mysql, q,'cron_check','getLog')).then(function (results) {
-		console.log(results[0][0][0].logcount);
-		if(results[0][0][0].logcount < 1){
-			//Cron Checker Console.Log
-			console.log("************************************************");
-	    	console.log("Cron Checker");
-			console.log("************************************************");
-			reminders.cronLog(req, global.mysql, q,'cron_check','insert');
-		}
-
-	});
-	    res.end();
-	    return false;
-
 });*/
+
 
 module.exports = app;

@@ -24,6 +24,6 @@ mysqli['updatereminders'] = "call updateReminders( ? )";
 mysqli['statistics'] = "call getStatistics(?)";
 mysqli['gettemplates'] = "call smsTemplates(?)";
 mysqli['smslogwithnocount'] = "call smsLogwithnoCount(?, ?, ?, ?, ?)";
-mysqli['certificatereminder'] = "call certificateReminder( )";
+//mysqli['certificatereminder'] = "call certificateReminder( )";
 mysqli['cronLog'] = "call getcronLog( ?, ?)";
 
