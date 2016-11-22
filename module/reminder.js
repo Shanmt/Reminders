@@ -83,7 +83,7 @@ exports.statistics =  function(req,mysql,q,type)
 }
 
 //Module To Give Satistics
-/*exports.getcertificatereminders =  function(req,mysql,q)
+exports.getcertificatereminders =  function(req,mysql,q)
 {
  
   $mysqli =  {};
@@ -91,10 +91,10 @@ exports.statistics =  function(req,mysql,q,type)
   var escape_data = [];
   var defered = q.defer();
   query =  mysql.query(strQuery,escape_data,defered.makeNodeResolver());
- 
+  console.log(query.sql);
   return defered.promise;
 
-}*/
+}
 
 exports.cronLog =  function(req,mysql,q,cronname,type)
 {

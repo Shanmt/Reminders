@@ -15,9 +15,9 @@ config.app();
 var CronJob = require('cron').CronJob;
 //Daily Customer reminders
 
-new CronJob('00 01 13 * * 1-6', _.throttle(servicereminders, 200,trailing=true), null, true, "Asia/Kolkata");
-new CronJob('11 57 12 * * 1-6', _.throttle(dailyStatistics, 200,trailing=true), null, true, "Asia/Kolkata");
-new CronJob('20 57 12 * * 1-6', _.throttle(weeklyStatistics, 200), null, true, "Asia/Kolkata");
+new CronJob('20 20 09 * * 1-6', _.throttle(servicereminders, 200,trailing=true), null, true, "Asia/Kolkata");
+new CronJob('11 13 20 * * 1-6', _.throttle(dailyStatistics, 200,trailing=true), null, true, "Asia/Kolkata");
+new CronJob('20 30 20 * * 5', _.throttle(weeklyStatistics, 200), null, true, "Asia/Kolkata");
 
 function servicereminders(){
 
@@ -430,20 +430,21 @@ app.get('/weekly_statistics', function (req, res) {
 
 });
 
-/*app.get('/certificate_reminder', function (req, res) {
-
-	q.all(reminders.getcertificatereminders(req, global.mysql, q)).then(function (results) {
+app.get('/certificate_reminder', function (req, res) {
+	
+	q.all([reminders.getcertificatereminders(req, global.mysql, q)]).then(function (results) {
 
 	
 	//Insurance Results
-	var insurance = results[0][0];
-
+	var insurance = results[0][0][0];
+	var fitness = results[0][0][1];
+	var emission = results[0][0][2];
+	var tax = results[0][0][3];
 	
-	console.log(insurance.length);
 	for(var i = 0;i<insurance.length;i++){
 		if(insurance[i].insurance_reminder_status == 1){
 			var dateexpiry = insurance[i].insuranceexpiry.format('dd-mm-yyyy');
-			customer_message = "Dear "+insurance[i].customername+", Thank you being an esteemed customer with "+insurance[i].servicestation+". Your Insurance will expire on "+dateexpiry;
+			customer_message = "Dear "+insurance[i].customername+", Thank you for being an esteemed customer with "+insurance[i].servicestation+". Your vehicle (" + insurance[i].registrationid  +") insurance  will expire on "+dateexpiry;
 			var smscount = parseInt( customer_message.length / 160 ) + 1;
 			//console.log( customer_message );	
 			var available_message = insurance[i].creditSMS - insurance[i].SMSused;
@@ -453,15 +454,91 @@ app.get('/weekly_statistics', function (req, res) {
 				//sending SMS to Customer
 				
 				sms.smsrequest(req,customer_message,insurance[i].ssid,insurance[i].customer_contact,insurance[i].customer_id,smsused,insurance[i].SenderID,0);
-				console.log(insurance[i].customername+' of '+insurance[i].servicestation+' Recieved Service Reminders');
+				console.log(insurance[i].customername+' of '+insurance[i].servicestation+' Recieved Insurance Reminders');
 			}
 			else{
-				console.log(ssid+' SMS Quota Ends *****');
+				console.log(insurance[i].ssid+' SMS Quota Ends *****');
 			}
 
 		}
 		else{
+			console.log(insurance[i].ssid+' is disabled insurance reminders *****');
+		}
+	}
+	
+	for(var j = 0;j<fitness.length;j++){
+		
+		if(fitness[j].fitness_reminder_status == 1){
+			var dateexpiry = fitness[j].fitnessexpiry.format('dd-mm-yyyy');
+			customer_message = "Dear "+fitness[j].customername+", Thank you for being an esteemed customer with "+fitness[j].servicestation+". Your vehicle (" + fitness[j].registrationid  +")  fitness  certificate  will expire on "+dateexpiry;
+			var smscount = parseInt( customer_message.length / 160 ) + 1;
+			//console.log( customer_message );	
+			var available_message = fitness[j].creditSMS - fitness[j].SMSused;
+			
+			var smsused = fitness[j].SMSused;
+			if((available_message - smscount)  > 0){
+				//sending SMS to Customer
+				
+				sms.smsrequest(req,customer_message,fitness[j].ssid,fitness[j].customer_contact,fitness[j].customer_id,smsused,fitness[j].SenderID,0);
+				console.log(fitness[j].customername+' of '+fitness[j].servicestation+' Recieved Fitness Reminders');
+			}
+			else{
+				console.log(fitness[j].ssid+' SMS Quota Ends *****');
+			}
 
+		}
+		else{
+			console.log(fitness[j].ssid+' is disabled fitness reminders *****');
+		}
+	}
+	
+	for(var k = 0;k<emission.length;k++){
+		if(emission[k].emission_reminder_status == 1){
+			var dateexpiry = emission[k].emissionexpiry.format('dd-mm-yyyy');
+			customer_message = "Dear "+emission[k].customername+", Thank you for being an esteemed customer with "+emission[k].servicestation+". Your vehicle  (" + emission[k].registrationid  +")  Emission/Pollution certificate will expire on "+dateexpiry;
+			var smscount = parseInt( customer_message.length / 160 ) + 1;
+			//console.log( customer_message );	
+			var available_message = emission[k].creditSMS - emission[k].SMSused;
+			
+			var smsused = emission[k].SMSused;
+			if((available_message - smscount)  > 0){
+				//sending SMS to Customer
+				
+				sms.smsrequest(req,customer_message,emission[k].ssid,emission[k].customer_contact,emission[k].customer_id,smsused,emission[k].SenderID,0);
+				console.log(emission[k].customername+' of '+emission[k].servicestation+' Recieved Emission Reminders');
+			}
+			else{
+				console.log(emission[k].ssid+' SMS Quota Ends *****');
+			}
+
+		}
+		else{
+			console.log(emission[k].ssid+' is disabled emission reminders *****');
+		}
+	}
+	
+	for(var l = 0;l<tax.length;l++){
+		if(tax[l].taxexpiry_reminder_status == 1){
+			var dateexpiry = tax[l].tax_expiry.format('dd-mm-yyyy');
+			customer_message = "Dear "+tax[l].customername+", Thank you for being an esteemed customer with "+tax[l].servicestation+". Your vehicle (" + tax[l].registrationid  +") tax will expire on "+dateexpiry;
+			var smscount = parseInt( customer_message.length / 160 ) + 1;
+			//console.log( customer_message );	
+			var available_message = tax[l].creditSMS - tax[l].SMSused;
+			
+			var smsused = tax[l].SMSused;
+			if((available_message - smscount)  > 0){
+				//sending SMS to Customer
+				
+				sms.smsrequest(req,customer_message,tax[l].ssid,tax[l].customer_contact,tax[l].customer_id,smsused,tax[l].SenderID,0);
+				console.log(tax[l].customername+' of '+tax[l].servicestation+' Recieved Tax Reminders');
+			}
+			else{
+				console.log(tax[l].ssid+' SMS Quota Ends *****');
+			}
+
+		}
+		else{
+			console.log(tax[l].ssid+' is disabled tax reminders *****');
 		}
 	}
 
@@ -472,7 +549,7 @@ app.get('/weekly_statistics', function (req, res) {
 	return false;
 
 	
-});*/
+});
 
 
 module.exports = app;
