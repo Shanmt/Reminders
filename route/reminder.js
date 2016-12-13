@@ -143,7 +143,10 @@ app.get('/all', function (req, res) {
 				console.log('Cron Already Executed');
 			}
 			
-	    });
+	    }).fail(function(err){
+			console.log(err.stack);
+			throw err;
+	    });	
 	
 		//Listing & sending SMS 6 Days before the reminder date to Service Station
 	
@@ -258,7 +261,10 @@ app.get('/all', function (req, res) {
 
 	    	
 		global.mysql.release();
-	    });
+	    }).fail(function(err){
+			console.log(err.stack);
+			throw err;
+	   });	
 
 	    
 	}
@@ -352,6 +358,9 @@ app.get('/daily_statistics', function (req, res) {
 			}
 
 		global.mysql.release();
+	   }).fail(function(err){
+			console.log(err.stack);
+			throw err;
 	   });	
 	}
 
@@ -412,7 +421,10 @@ app.get('/weekly_statistics', function (req, res) {
 			}
 
 		global.mysql.release();
-	   });	
+	   }).fail(function(err){
+			console.log(err.stack);
+			throw err;
+	   });		
 	}
 
 	res.end();   
@@ -533,7 +545,10 @@ app.get('/certificate_reminder', function (req, res) {
 	}
 
 	global.mysql.release();
-	});
+	}).fail(function(err){
+			console.log(err.stack);
+			throw err;
+	});	
 
 	res.end();
 	return false;
