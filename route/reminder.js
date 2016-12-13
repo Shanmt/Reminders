@@ -15,13 +15,8 @@ config.app();
 var CronJob = require('cron').CronJob;
 //Daily Customer reminders
 
-new CronJob('20 20 09 * * 1-6', _.throttle(servicereminders, 200,trailing=true), null, true, "Asia/Kolkata");
-new CronJob('11 13 20 * * 1-6', _.throttle(dailyStatistics, 200,trailing=true), null, true, "Asia/Kolkata");
-new CronJob('20 30 20 * * 5', _.throttle(weeklyStatistics, 200), null, true, "Asia/Kolkata");
-
-function servicereminders(){
-
-	request({
+new CronJob('20 10 09 * * 1-6', function() {
+  request({
         rejectUnauthorized: false,
         url:global.url+'reminder/all'
     }, function(error, response, body) {
@@ -36,13 +31,10 @@ function servicereminders(){
             console.log(error);
         }
     })
+}, null, true, "Asia/Kolkata");
 
-}
-
-
-function dailyStatistics(){
-
-	request({
+new CronJob('20 10 21 * * 1-6', function() {
+  request({
         rejectUnauthorized: false,
         url:global.url+'reminder/daily_statistics'
     }, function(error, response, body) {
@@ -57,29 +49,10 @@ function dailyStatistics(){
             console.log(error);
         }
     });
-}
-function dailyStatistics2(){
+}, null, true, "Asia/Kolkata");
 
-	request({
-        rejectUnauthorized: false,
-        url:global.url+'reminder/croncheck'
-    }, function(error, response, body) {
-    	
-        if (!error && response.statusCode == 200) {
-            console.log('Successfull daily reminder cron');
-            
-        }
-        else{
-
-            console.log('Failed daily reminder cron');
-            console.log(error);
-        }
-    });
-}
-
-function weeklyStatistics(){
-
-	request({
+new CronJob('20 30 21 * * 5', function() {
+  request({
         rejectUnauthorized: false,
         url:global.url+'reminder/weekly_statistics'
     }, function(error, response, body) {
@@ -94,8 +67,25 @@ function weeklyStatistics(){
             console.log(error);
         }
     });
+}, null, true, "Asia/Kolkata");
 
-}
+new CronJob('20 22 18 * * 1-6', function() {
+  request({
+        rejectUnauthorized: false,
+        url:global.url+'reminder/certificate_reminder'
+    }, function(error, response, body) {
+    	
+        if (!error && response.statusCode == 200) {
+            console.log('Successfull weekly status cron');
+            
+        }
+        else{
+
+            console.log('Failed weekly status cron');
+            console.log(error);
+        }
+    });
+}, null, true, "Asia/Kolkata");
 
 //Function to send Daily Reminders
 app.get('/all', function (req, res) {
@@ -103,7 +93,7 @@ app.get('/all', function (req, res) {
     //query to get all reminders list
     today = new Date().format('dddd');
     
-    datein_format = 3;
+    datein_format = 7;
     dateitem =  new Date().strtotime("+"+datein_format+" day").format('dddd');
     
     if(today != 'Sunday'){
@@ -158,7 +148,7 @@ app.get('/all', function (req, res) {
 		//Listing & sending SMS 6 Days before the reminder date to Service Station
 	
 
-	    datein_sformat =  3;
+	    datein_sformat =  6;
 		seller_dateitem =  new Date().strtotime("+"+datein_sformat+" day").format('dddd');
 
 		
